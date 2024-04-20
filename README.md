@@ -17,6 +17,20 @@ API that have implemented in this sdk:
 | Debit Charge Host To Host      | :white_check_mark: |
 | Get Card List                  | :x:                |
 
+List Of Public API
+
+```go
+type ClientInterface interface {
+	GetBusinessAccessToken(ctx context.Context) (*GetAccessTokenResponse, error)
+	AccountBinding(ctx context.Context, req *AccountBindingRequest, b2bToken, externalID string) (*AccountBindingResponse, error)
+	GetAuthCode(ctx context.Context, req *GetAuthCodeRequest, b2bToken, externalID string) (*GetAuthCodeResponse, error)
+	GetCustomerAccessToken(ctx context.Context, authCode, accessTokenB2B string) (*GetAccessTokenResponse, error)
+	Debit(ctx context.Context, req *DebitRequest, b2bToken, b2b2cToken, externalID string) (*DebitResponse, error)
+	Unbind(ctx context.Context, req *AccountUnbindRequest, b2bToken, b2b2cToken, externalID string) (*AccountUnbindResponse, error)
+	DebitStatus(ctx context.Context, b2bToken, debitExternalID, externalID string) (*DebitResponse, error)
+}
+```
+
 Note: OTP Based Account Binding / Unbinding / Debit currently not implemented yet. any PR are welcome.
 
 # Flow
