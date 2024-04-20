@@ -154,4 +154,4 @@ Z4Mar+3f+SFIElF+M+aD4AzzibGUJghJ03cbR6Pt
 
 # Contributing
 
-If you would like to contribue please read our contributing guidelines. Any form of contribution is welcome.
+If you would like to contribute please read our [contributing guidelines](https://github.com/praswicaksono/ayoconnect-direct-debit-go/blob/main/CONTRIBUTING.md). Any form of contribution is welcome.
