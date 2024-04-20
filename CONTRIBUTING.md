@@ -34,9 +34,10 @@ To submit a pull request:
 
 - Fork the repository and create a new branch
 - Make your changes and test them thoroughly
+- Cover your changes in unit tests
 - Open a pull request with a name and description of what you changed, please fill pull request issue template
-- Make sure github workflow test pass
 - Be sure to link to any relevant issues in your PR description
+- Make sure github workflow test pass
 - After PR approved squash PR into 1 commit and include issue number in commit message
 
 # Community Bug Report and Code Review
