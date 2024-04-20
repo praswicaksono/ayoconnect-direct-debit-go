@@ -1,14 +1,13 @@
-Ayoconnect Direct Debit Go SDK
-===
+# Ayoconnect Direct Debit Go SDK
+
 This library contains ayoconnect direct debit v2 sdk for Go.
 
-Overview
-===
+# Overview
 
 API that have implemented in this sdk:
 
 | Feature                        | Implemented        |
-|--------------------------------|--------------------|
+| ------------------------------ | ------------------ |
 | Generate B2B Access Token      | :white_check_mark: |
 | Generate B2B2C Access Token    | :white_check_mark: |
 | Get Auth Code                  | :white_check_mark: |
@@ -16,13 +15,33 @@ API that have implemented in this sdk:
 | Registration Account Binding   | :white_check_mark: |
 | Registration Account Unbinding | :white_check_mark: |
 | Debit Charge Host To Host      | :white_check_mark: |
-| Debit Host To Host             | :white_check_mark: |
 | Get Card List                  | :x:                |
 
 Note: OTP Based Account Binding / Unbinding / Debit currently not implemented yet. any PR are welcome.
 
-Installation
-===
+# Flow
+
+## Card Binding Flow
+
+List of API Used:
+
+- Generate B2B Access Token
+- Get Auth Code
+- Registration Account Binding
+
+![Card Binding](https://storage.googleapis.com/dd-ui-static-dev/api-flows/cardBindingV2Flow.jpg)
+
+## Debit Flow (Non OTP)
+
+List of API Used:
+
+- Generate B2B Access Token
+- Generate B2B2C Access Token
+- Debit Charge Host To Host
+
+![Debit](https://storage.googleapis.com/dd-ui-static-dev/api-flows/chargePaymentV2Flow.jpg)
+
+# Installation
 
 ```
 go get github.com/praswicaksono/ayoconnect-direct-debit-go
@@ -36,12 +55,61 @@ import github.com/praswicaksono/ayoconnect-direct-debit-go/directdebit
 
 If you find any error please run `go mod tidy` to clear your go.mod file
 
-Example
-===
+# Configuration
+
+You may configure the sdk by passing a `Config` struct to the `New` function. Here list configuration options:
 
 ```go
-// private key must be in PKCS8 format
-privkey := `-----BEGIN RSA PRIVATE KEY-----
+type Config struct {
+	ClientID        string
+	ClientSecret    string
+	MerchantID      string
+	RsaPrivateKey   string
+	EndpointBaseURL string
+	ChannelID       string
+	Logger          *slog.Logger
+	HTTPClient      *http.Client
+}
+```
+
+To instantiante new client you can pass configuration to `New` function
+
+```go
+package example
+
+import "github.com/praswicaksono/ayoconnect-direct-debit-go/directdebit"
+
+func main() {
+    cfg := &directdebit.Config{
+		RsaPrivateKey: privkey,
+		ClientID:      "123",
+		MerchantID:    "123",
+		HTTPClient:    &http.Client{},
+		Logger:        slog.Default(),
+	}
+
+	client, _ := directdebit.New(cfg)
+}
+```
+
+# Example
+
+Get B2B Access Token
+
+```go
+package example
+
+import (
+	"context"
+	"log/slog"
+	"net/http"
+
+	"github.com/praswicaksono/ayoconnect-direct-debit-go/directdebit"
+)
+
+func genearetB2BToken() string {
+    // private key must be in PKCS8 Format
+	privkey := `-----BEGIN RSA PRIVATE KEY-----
 MIIBOgIBAAJBAJ9wKHG/JDCr+6eZ6as5hHspDhZEUkveTF9GnCcDqRVmS/E4rhYw
 niRfSSf2hfp516cYpC7zJ2AFB4id63T3lxECAwEAAQJALk7qQFdvEH/zYPOwTd4v
 34HGKKuBZ63Sat3cXuyOQLt3OSj/lgRx/XELRjdLMADQrxTI0ijUvr9jqLB0I6O1
@@ -51,29 +119,25 @@ tgOMdFKyP3gtAiEAgC0db2p94guTDvBEFJGndRJtAPdCSsUIw2AQbg1egi0CIH+a
 Z4Mar+3f+SFIElF+M+aD4AzzibGUJghJ03cbR6Pt
 -----END RSA PRIVATE KEY-----`
 
-// you can pass custom http client and logger here
-cfg = &directdebit.Config{
-    RsaPrivateKey: privkey,
-    ClientID:      "123",
-    MerchantID:    "123",
-    HTTPClient:    &http.Client{},
-    Logger:        slog.Default(),
-}
+	cfg := &directdebit.Config{
+		RsaPrivateKey: privkey,
+		ClientID:      "123",
+		MerchantID:    "123",
+		HTTPClient:    &http.Client{},
+		Logger:        slog.Default(),
+	}
 
-request = &directdebit.DebitRequest{}
-b2bToken = "sampleB2bToken"
-externalID = "sampleExternalID"
-b2b2cToken = "sampleB2b2cToken"
+	client, _ := directdebit.New(cfg)
+	resp, err := client.GetBusinessAccessToken(context.Background())
+	if err != nil {
+		slog.Error(err.Error())
+		return ""
+	}
 
-client, _ = directdebit.New(cfg)
-resp, err := client.Debit(context.Background(), request, b2bToken, b2b2cToken, externalID)
-
-if err != nil {
-    panic(err)
+	return resp.AccessToken
 }
 ```
 
-Contributing
-===
+# Contributing
 
 If you would like to contribue please read our contributing guidelines. Any form of contribution is welcome.
